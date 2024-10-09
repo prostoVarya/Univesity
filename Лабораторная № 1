@@ -1,0 +1,47 @@
+using System;
+class zadanie2 {
+  static void Main() {
+    int a=Convert.ToInt32(Console.ReadLine());
+    int b=Convert.ToInt32(Console.ReadLine());
+    
+    a=a+b;
+    b=a-b;
+    a=a-b;
+    
+    Console.WriteLine(a);
+    Console.WriteLine(b);
+  }
+}
+
+using System;
+class zadanie2 {
+  static void Main() {
+    int a=Convert.ToInt32(Console.ReadLine());
+    int b=Convert.ToInt32(Console.ReadLine());
+
+    int c=(a+b+Math.Abs(a-b))/2;
+    
+    Console.WriteLine(c);
+  }
+}
+
+using System;
+class zadanie3 {
+  static void Main() {
+    Console.Write("Введите длину грядки (L): ");
+    int L=Convert.ToInt32(Console.ReadLine());
+    
+    Console.Write("Введите ширину грядки (W): ");
+    int W=Convert.ToInt32(Console.ReadLine());
+    
+    Console.Write("Введите расстояние от колодца до края огорода(K): ");
+    int K=Convert.ToInt32(Console.ReadLine());
+    
+    Console.Write("Введите количество грядок (n): ");
+    int n=Convert.ToInt32(Console.ReadLine());
+
+    int a=K*n*2+2*(L+W)*n+W*n*(n-1);
+    
+    Console.WriteLine("Наименьшее растояние, которое требуется пройти огороднику для полива всех грядок: {0}", a);
+  }
+}
