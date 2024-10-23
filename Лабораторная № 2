@@ -1,0 +1,101 @@
+using System;
+class zadanie1 {
+  static void Main() {
+    int n = Convert.ToInt32(Console.ReadLine());
+    int counter =0;
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    for(int i =0; i<n; i++)
+    {
+        if(i>2)
+        {
+            if((a>b) && (c>b))
+            {
+                counter+=1;
+                a = b;
+                b = c;
+                c = Convert.ToInt32(Console.ReadLine());
+            }
+        else {
+            a = b;
+            b = c;
+            c = Convert.ToInt32(Console.ReadLine());
+            
+        }
+    } else if(i == 0) {
+        a = Convert.ToInt32(Console.ReadLine());
+    } else if(i == 1) {
+        b = Convert.ToInt32(Console.ReadLine());
+    } else if(i == 2) {
+        c = Convert.ToInt32(Console.ReadLine());
+    }
+ }
+ if((a>b) && (c>b)) {
+     counter+=1;
+ }
+ Console.WriteLine(counter);
+      
+  }
+}
+
+
+using System;
+class zadanie2 {
+  static void Main() {
+    Console.Write("Введите количество элементов: ");
+    int count = Convert.ToInt32(Console.ReadLine());
+    int mx1= -1000, mx2=2000;
+    Console.WriteLine("Введите элеметы: ");
+    for (int i = 0; i < count; i++)
+    {
+        int number = Convert.ToInt32(Console.ReadLine());
+        if (number > mx1)
+        { 
+            mx2 = mx1;
+            mx1 = number;
+        }
+    }
+    Console.WriteLine("Второй максималный элемент равен  "+ mx2);   
+  }
+}
+
+
+using System;
+class zadanie3 {
+  static void Main() {
+    Console.Write("Введите количество элементов: ");
+    int count = Convert.ToInt32(Console.ReadLine());
+    int n = 0;
+    Console.WriteLine("Введите элементы: ");
+    for(int i = 0; i < count; i++)
+    {
+        int number = Convert.ToInt32(Console.ReadLine());
+        if(Math.Abs(number) % 10 == 3)
+        {
+            n++;
+        }
+    }
+    Console.WriteLine("Количество элементов, оканчивающихся на 3: " + n);
+  }
+}
+
+
+using System;
+class zadanie4 {
+  static void Main() {
+    Console.Write("Введите количество элементов: ");
+    int count = Convert.ToInt32(Console.ReadLine());
+    int n = 0;
+    Console.WriteLine("Введите элементы: ");
+    for(int i = 0; i < count; i++)
+    {
+        int number = Convert.ToInt32(Console.ReadLine());
+        if(Math.Abs(number) % 10 == 4)
+        {
+            n++;
+        }
+    }
+    Console.WriteLine(n==count);
+  }
+}
