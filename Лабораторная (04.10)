@@ -1,0 +1,108 @@
+using System;
+namespace SortM {
+ class zadanie1   {
+  static void Main() {
+    int n = Convert.ToInt32(Console.ReadLine());
+    int a;  int l=0;  int makc=0;
+    for (int i=0;i<n;i++)
+    {
+      a = Convert.ToInt32(Console.ReadLine());  
+      if (a!=0)
+      {
+          l++;
+          makc=Math.Max(l,makc);
+      }
+      else
+      {
+          l=0;
+      }
+    }
+    Console.WriteLine(makc); } } }
+
+
+namespace program
+{
+    class zadanie2
+    {
+        static void Main()
+        {
+             int n = Convert.ToInt32(Console.ReadLine());
+            int min = n;
+            int xmin = n;
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = Convert.ToInt32(Console.ReadLine());
+            }
+            for (int i = 0; i < n-1; i++)
+            {
+                if (arr[i] == arr[i + 1])
+                {
+                    xmin += 1;
+                }
+                else
+                {
+                    min = Math.Min(xmin, min);
+                    xmin = 1;
+                }
+            }
+            min = Math.Min(xmin, min);
+            Console.WriteLine(min); } } }
+
+using System;
+
+namespace program
+{
+    class zadanie3
+    {
+        static void Main()
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+            int summa = 0;
+            int xsum = 0;
+            bool flag = true;
+            bool flag1 = true;
+            int[] num = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+               num[i] = Convert.ToInt32(Console.ReadLine());
+            }
+            for (int i = 0; i < n; i++)
+            {
+                if (Math.Abs(num[i])%2==0)
+                {
+                    if (flag == true)
+                    {
+                        xsum = num[i];
+                        flag = false;
+                    }
+                    else
+                    {
+                        xsum += num[i];
+                    }
+                }
+                else
+                {
+                    if (flag1==true)
+                    {
+                        summa = xsum;
+                        flag1 = false;
+                    }
+                    summa = Math.Max(summa, xsum);
+                    flag = true;
+                }
+            }
+            if (flag1==true)
+            {
+                summa = xsum;
+                flag1 = false;
+            }
+            if (flag == false){
+                summa = Math.Max(xsum, summa);
+            }
+
+            Console.WriteLine(summa);
+        }
+    }
+}
+
