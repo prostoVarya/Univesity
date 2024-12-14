@@ -1,0 +1,126 @@
+//На вход подается одномерный массив. Определить, образуют ли элементы массива равномерно возрастающую последовательность?
+using System;
+namespace program
+{
+    class zadanie1
+    {
+        static void Main()
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+            int[] array = new int[n];
+            
+            for (int i = 0; i < n; i++)
+            {
+                array[i] = Convert.ToInt32(Console.ReadLine());
+            }
+            bool isUniformlyIncreasing = IsUniformlyIncreasing(array);
+        Console.WriteLine(isUniformlyIncreasing ? "Массив образует равномерно возрастающую последовательность." : "Массив не образует равномерно возрастающую последовательность.");
+        }
+       static bool IsUniformlyIncreasing(int[] arr)
+    {
+        if (arr.Length < 2) 
+        return true; 
+
+        int difference = arr[1] - arr[0]; 
+
+        for (int i = 1; i < arr.Length - 1; i++)
+        {
+            if (arr[i + 1] - arr[i] != difference) 
+            {
+                return false; 
+            }
+        }
+        return true; 
+    }
+            
+ }
+}
+
+//На вход подается одномерный массив. Сформировать выходной массив, в котором сначала отрицательные элементы, затем нулевые, затем положительные(без применения сортировки)
+using System;
+namespace program
+{
+    class zadanie2
+    {
+        static void Main()
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+            int[] inputArray = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+              inputArray[i] = Convert.ToInt32(Console.ReadLine());
+            }
+            int [] outputArray=RearrangeArray(inputArray);
+        
+        Console.WriteLine(string.Join(", ", outputArray)); 
+        }    
+            
+            static int[] RearrangeArray(int[] arr)
+    {
+        int[] result = new int[arr.Length];
+        int index = 0;
+        
+        foreach (int el in arr)
+        {
+            if (el < 0)
+            {
+                result[index++] = el;
+            }
+        }
+        foreach (int el in arr)
+        {
+            if (el == 0)
+            {
+                result[index++] = el;
+            }
+        }
+        foreach (int el in arr)
+        {
+            if (el > 0)
+            {
+                result[index++] = el;
+            }
+        }
+
+        return result;
+    }
+  }
+}
+
+//На вход подается одномерный массив. Определить имеется ли в массиве элемент положительный, четный и стоящий на нечетном месте. Вывести да/нет
+using System;
+namespace Program
+{
+    class zadanie3
+    {
+        public static void Main()
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+            int[] arr = new int[n];
+            bool found = false;
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = Convert.ToInt32(Console.ReadLine());
+            }
+            
+            for (int i = 0; i < n; i++)
+        {
+          
+            if (i%2!= 0 && arr[i] > 0 && arr[i] % 2 == 0)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (found)
+        {
+            Console.WriteLine("да");
+        }
+        else
+        {
+            Console.WriteLine("нет");
+        }
+       }
+    }
+}
