@@ -1,0 +1,40 @@
+using System;
+
+namespace program
+{
+    class zadanie1
+    {
+        static void Enter(int n, int[] arr)
+        {
+            for (int i = 0; i < n; i++)
+            { 
+                arr[i] = Convert.ToInt32(Console.ReadLine()); 
+            }
+        }
+
+        static void Change(int[] arr)
+        {
+            for (int i = 0; i < arr.Length; i++) 
+            { 
+                arr[i] = arr[i] * arr[i]; 
+            }
+        }
+
+        static void Print(int[] arr)
+        {
+            foreach (int i in arr) 
+            { 
+                Console.WriteLine(i); 
+            }
+        }
+
+        static void Main()
+        {
+            int n = Convert.ToInt32(Console.ReadLine());
+            int[] arr = new int[n];
+            Enter(n, arr);
+            Change(arr);
+            Print(arr);
+            }
+      }
+}
