@@ -1,0 +1,164 @@
+//На вход подается двухмерный массив. Определить пары номеров строк, состоящих из одних и тех же элементов(без сортировки). 
+using System;
+class zadanie1 {
+  static void Main(){
+   Console.WriteLine("Введите количество строк: ");
+   int n = int.Parse(Console.ReadLine());
+   Console.WriteLine("Введите количество элементов в строке: ");
+   int m = int.Parse(Console.ReadLine());
+   int  [,] array = new int [n,m];
+   for(int i=0; i<array.GetLength(0); i++)
+   {
+       for(int j=0; j<array.GetLength(1); j++)
+       {
+           Console.WriteLine("Y: "+ i+ " X: " + j);
+           array[i,j]=Convert.ToInt32(Console.ReadLine());
+       }
+   }
+   Find(array);
+  }
+   
+   static void Find(int[,] array)
+    {
+        int rowCount = array.GetLength(0);
+        int colCount = array.GetLength(1);
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            for (int j = i + 1; j < rowCount; j++)
+            {
+                if (Rows(array, i, j, colCount))
+                {
+                    Console.WriteLine($"Пара строк: {i} и {j} одинаковы");
+                }
+            }
+        }
+    }
+
+    static bool Rows(int[,] array, int row1, int row2, int colCount)
+    {
+        for (int k = 0; k < colCount; k++)
+        {
+            if (array[row1, k] != array[row2, k])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+  }
+
+//Поменять местами максимальный и минимальный элемент массива
+using System;
+class zadanie2 {
+  static void Main(){
+    Console.WriteLine("Введите количество строк: ");
+int n = int.Parse(Console.ReadLine());
+    Console.WriteLine("Введите количество элементов в строке: ");
+int m = int.Parse(Console.ReadLine());
+   int  [,] array = new int [n,m];
+   for(int i=0; i<array.GetLength(0); i++)
+   {
+       for(int j=0; j<array.GetLength(1); j++)
+       {
+           Console.WriteLine("Y: "+ i+ " X: " + j);
+           array[i,j]=Convert.ToInt32(Console.ReadLine());
+       }
+   }
+   MinMax(array);
+   
+   Print(array);
+  }
+  static void MinMax(int[,] array)
+    {
+        int minValue = int.MaxValue;
+        int maxValue = int.MinValue;
+        (int minRow, int minCol) = (-1, -1);
+        (int maxRow, int maxCol) = (-1, -1);
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                if (array[i, j] < minValue)
+                {
+                    minValue = array[i, j];
+                    minRow = i;
+                    minCol = j;
+                }
+                if (array[i, j] > maxValue)
+                {
+                    maxValue = array[i, j];
+                    maxRow = i;
+                    maxCol = j;
+                }
+            }
+        }
+
+        if (minRow != -1 && maxRow != -1)
+        {
+            array[minRow, minCol] = maxValue;
+            array[maxRow, maxCol] = minValue;
+        }
+    }
+
+    static void Print(int[,] array)
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                Console.Write(array[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
+//Определить в каждом ли столбце массива сумма элементов четная
+using System;
+class zadanie3 {
+  static void Main() {
+   Console.WriteLine("Введите количество строк: ");
+   int n = int.Parse(Console.ReadLine());
+   Console.WriteLine("Введите количество элементов в строке: ");
+   int m = int.Parse(Console.ReadLine());
+   int  [,] array = new int [n,m];
+   for(int i=0; i<array.GetLength(0); i++)
+   {
+       for(int j=0; j<array.GetLength(1); j++)
+       {
+           Console.WriteLine("Y: "+ i+ " X: " + j);
+           array[i,j]=Convert.ToInt32(Console.ReadLine());
+       }
+   }
+   
+   bool flag = true; 
+
+        for (int x = 0; x < array.GetLength(1); x++)
+        {
+            int sum = 0; 
+
+            for (int y = 0; y < array.GetLength(0); y++)
+            {
+                sum += array[y, x];
+            }
+
+            if (sum % 2 != 0) 
+            {
+                flag = false;
+                break; 
+            }
+        }
+
+        if (flag)
+        {
+            Console.WriteLine("Сумма элементов четная в каждом столбце");
+        }
+        else
+        {
+            Console.WriteLine("Сумма элементов нечетная в каждом столбце");
+        }
+    }
+}
+  
+
