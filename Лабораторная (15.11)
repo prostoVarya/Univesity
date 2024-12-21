@@ -1,0 +1,65 @@
+using System;
+
+class zadanie1
+{
+    static void Main()
+    {
+        int[][] Array = MakeArray();
+        Find(Array);
+    }
+
+    static int[][] MakeArray()
+    {
+        Console.Write("Введите количество строк: ");
+        int n = int.Parse(Console.ReadLine());
+        int[][] array = new int[n][];
+
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write($"Введите количество элементов в строке {i + 1}: ");
+            int cols = int.Parse(Console.ReadLine());
+            array[i] = new int[cols];
+
+            Console.WriteLine($"Введите элементы строки {i + 1}:");
+            for (int j = 0; j < cols; j++)
+            {
+                array[i][j] = int.Parse(Console.ReadLine());
+            }
+        }
+        return array;
+    }
+
+    static void Find(int[][] array)
+    {
+        int maxRow = -1, minRow = -1;
+        int maxVal = int.MinValue;
+        int minVal = int.MaxValue;
+
+        for (int i = 0; i < array.Length; i++)
+        {
+            int maxInRow = int.MinValue;
+            int minInRow = int.MaxValue;
+
+            foreach (int num in array[i])
+            {
+                if (num > maxInRow) maxInRow = num;
+                if (num < minInRow) minInRow = num;
+            }
+
+            if (maxInRow % 2 == 0 && maxInRow > maxVal)
+            {
+                maxVal = maxInRow;
+                maxRow = i;
+            }
+
+            if (minInRow % 2 == 0 && minInRow < minVal)
+            {
+                minVal = minInRow;
+                minRow = i;
+            }
+        }
+
+        Console.WriteLine($"Строка с максимальным четным элементом: {maxRow + 1}");
+        Console.WriteLine($"Строка с минимальным четным элементом: {minRow + 1}");
+    }
+}
