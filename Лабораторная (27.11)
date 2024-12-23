@@ -1,0 +1,50 @@
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        string input = Console.ReadLine(); 
+        string formattedInput = FormatString(input);
+        
+        Console.WriteLine("Отформатированная строка: " + formattedInput);
+        
+        var palindromes = FindPalindromes(formattedInput);
+        Console.WriteLine("Палиндромы: " + string.Join(", ", palindromes));
+        
+        int count = CountWords(formattedInput);
+        Console.WriteLine("Количество слов с меньшим количеством согласных, чем гласных: " + count);
+    }
+
+    static string FormatString(string input)
+    {
+        return string.Join(" ", input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    static string[] FindPalindromes(string input)
+    {
+        return input.Split(' ')
+                    .Where(word => word.Equals(new string(word.Reverse().ToArray()), StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+    }
+
+    static int CountWords(string input)
+    {
+        string glass = "aeiouyAEIOUY";
+        int count = 0;
+
+        foreach (var word in input.Split(' '))
+        {
+            int glasCount = word.Count(c => glass.Contains(c));
+            int soglCount = word.Length - glasCount;
+
+            if (soglCount < glasCount)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
