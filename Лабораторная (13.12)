@@ -1,0 +1,65 @@
+using System;
+class HelloWorld {
+    public class klass {
+        int var1, var2;
+        public void Sum (){
+            int c = var1 + var2;
+            Console.WriteLine("Результат сложения: " + c);
+        }
+        public void Proiz (){
+            int c = var1 * var2;
+            Console.WriteLine("Результат произведения: " + c);
+        }
+        public void Delenie (){
+            if (var2 != 0){
+                double c = 1.0*var1 / var2;
+                Console.WriteLine("Результат деления: " + c);
+            }
+            else{
+                Console.WriteLine("Нельзя делить на ноль.");
+            }
+        }
+        public void Raznost (){
+            int c = var1 - var2;
+            Console.WriteLine("Результат вычетания: " + c);
+        }
+        public klass()
+        {
+            this.var1 = 0;
+            this.var2 = 0;
+        }
+        public klass (int a)
+        {
+            this.var1 = a;
+            this.var2 = 0;
+        }
+        public klass (int a, int b)
+        {
+            this.var1 = a;
+            this.var2 = b;
+        }
+    }
+  static void Main() {
+      klass Klass1 = new klass();
+      Console.WriteLine("Введи первое поле 2 объекта");
+      klass Klass2 = new klass(Convert.ToInt32(Console.ReadLine()));
+      Console.WriteLine("Введи через пробел оба поля 3 объекта");
+      string[] s = Console.ReadLine().Split(' ');
+      klass Klass3 = new klass(Convert.ToInt32(s[0]), Convert.ToInt32(s[1]));
+      Console.WriteLine("Первый объект");
+      Klass1.Sum();
+      Klass1.Proiz();
+      Klass1.Delenie();
+      Klass1.Raznost();
+      Console.WriteLine("Второй объект");
+      Klass2.Sum();
+      Klass2.Proiz();
+      Klass2.Delenie();
+      Klass2.Raznost();
+      Console.WriteLine("Третий объект");
+      Klass3.Sum();
+      Klass3.Proiz();
+      Klass3.Delenie();
+      Klass3.Raznost();
+  }
+}
