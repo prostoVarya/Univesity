@@ -25,7 +25,7 @@ namespace program
 
         for (int i = 1; i < arr.Length - 1; i++)
         {
-            if (arr[i + 1] - arr[i] != difference) 
+            if (arr[i + 1] - arr[i] != difference && difference < 0) 
             {
                 return false; 
             }
