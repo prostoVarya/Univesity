@@ -1,0 +1,48 @@
+using System;
+
+class Program
+{
+    static void DFS(int[,] graph, bool[] visited, int vertex, int n)
+    {
+        visited[vertex] = true;
+        for (int i = 0; i < n; i++)
+        {
+            if (graph[vertex, i] == 1 && !visited[i])
+            {
+                DFS(graph, visited, i, n);
+            }
+        }
+    }
+    static int Components(int[,] graph, int n)
+    {
+        bool[] visited = new bool[n]; 
+        int count = 0; 
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!visited[i])
+            {
+                DFS(graph, visited, i, n); 
+                count++; 
+            }
+        }
+
+        return count;
+    }
+
+    static void Main()
+    {
+        int[,] graph = {
+            { 0, 1, 0, 0, 0 },
+            { 1, 0, 0, 0, 0 },
+            { 0, 0, 0, 1, 1 },
+            { 0, 0, 1, 0, 0 },
+            { 0, 0, 1, 0, 0 }
+        };
+
+        int n = graph.GetLength(0); 
+        int components = Components(graph, n);
+
+        Console.WriteLine("Количество компонент связности: " + components);
+    }
+}
