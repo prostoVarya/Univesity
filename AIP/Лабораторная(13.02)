@@ -1,0 +1,191 @@
+using System;
+class Phone
+{
+    public string Number { get; set; } 
+    public string Operator { get; set; } 
+    public int Year { get; set; } 
+
+    public Phone(string number, string operatorName, int year)
+    {
+        Number = number;
+        Operator = operatorName;
+        Year = year;
+    }
+}
+class User
+{
+    public string FullName { get; set; } 
+    public string City { get; set; } 
+    public Phone[] Phones { get; set; } 
+    public int PhoneCount { get; set; } 
+
+    public User(string fullName, string city, int maxPhones)
+    {
+        FullName = fullName;
+        City = city;
+        Phones = new Phone[maxPhones];
+        PhoneCount = 0;
+    }
+    public void AddPhone(string number, string operatorName, int year)
+    {
+        if (PhoneCount < Phones.Length)
+        {
+            Phones[PhoneCount] = new Phone(number, operatorName, year);
+            PhoneCount++;
+        }
+        else
+        {
+            Console.WriteLine("Достигнуто максимальное количество телефонов для пользователя.");
+        }
+    }
+}
+
+class Program
+{
+    static User[] users = new User[100];
+    static int userCount = 0; 
+
+    static void Main(string[] args)
+    {
+        while (true)
+        {
+            Console.WriteLine("Меню:");
+            Console.WriteLine("1. Добавить пользователя");
+            Console.WriteLine("2. Поиск по номеру телефона");
+            Console.WriteLine("3. Поиск по оператору связи");
+            Console.WriteLine("4. Поиск по году постановки на учёт");
+            Console.WriteLine("5. Выход");
+            Console.Write("Выберите действие: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    AddUser();
+                    break;
+                case "2":
+                    PhoneNumber();
+                    break;
+                case "3":
+                    Operator();
+                    break;
+                case "4":
+                    Year();
+                    break;
+                case "5":
+                    return;
+                default:
+                    Console.WriteLine("Неверно.");
+                    break;
+            }
+        }
+    }
+    static void AddUser()
+    {
+        if (userCount >= users.Length)
+        {
+            Console.WriteLine("Достигнуто максимальное количество пользователей.");
+            return;
+        }
+
+        Console.Write("Введите ФИО: ");
+        string fullName = Console.ReadLine();
+        Console.Write("Введите город проживания: ");
+        string city = Console.ReadLine();
+        Console.Write("Введите максимальное количество телефонов для пользователя: ");
+        int maxPhones = int.Parse(Console.ReadLine());
+
+        User user = new User(fullName, city, maxPhones);
+
+        while (true)
+        {
+            Console.Write("Введите номер телефона (или 'стоп' для завершения): ");
+            string number = Console.ReadLine();
+            if (number.ToLower() == "стоп") break;
+
+            Console.Write("Введите оператора связи: ");
+            string operatorName = Console.ReadLine();
+
+            Console.Write("Введите год постановки на учёт: ");
+            int year = int.Parse(Console.ReadLine());
+
+            user.AddPhone(number, operatorName, year);
+        }
+        users[userCount] = user;
+        userCount++;
+        Console.WriteLine("Пользователь добавлен.");
+    }
+    
+    static void PhoneNumber()
+    {
+        Console.Write("Введите номер телефона для поиска: ");
+        string number = Console.ReadLine();
+
+        bool found = false;
+        for (int i = 0; i < userCount; i++)
+        {
+            for (int j = 0; j < users[i].PhoneCount; j++)
+            {
+                if (users[i].Phones[j].Number == number)
+                {
+                    Console.WriteLine($"Найден пользователь: ФИО: {users[i].FullName}, Город: {users[i].City}");
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            Console.WriteLine("Пользователи не найдены.");
+        }
+    }
+     static void Operator()
+    {
+        Console.Write("Введите оператора связи для поиска: ");
+        string operatorName = Console.ReadLine();
+
+        bool found = false;
+        for (int i = 0; i < userCount; i++)
+        {
+            for (int j = 0; j < users[i].PhoneCount; j++)
+            {
+                if (users[i].Phones[j].Operator == operatorName)
+                {
+                    Console.WriteLine($"Найден пользователь: ФИО: {users[i].FullName}, Город: {users[i].City}");
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            Console.WriteLine("Пользователи не найдены.");
+        }
+    }
+    static void Year()
+    {
+        Console.Write("Введите год постановки на учёт для поиска: ");
+        int year = int.Parse(Console.ReadLine());
+
+        bool found = false;
+        for (int i = 0; i < userCount; i++)
+        {
+            for (int j = 0; j < users[i].PhoneCount; j++)
+            {
+                if (users[i].Phones[j].Year == year)
+                {
+                    Console.WriteLine($"Найден пользователь: ФИО: {users[i].FullName}, Город: {users[i].City}");
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            Console.WriteLine("Пользователи не найдены.");
+        }
+    }
+}
