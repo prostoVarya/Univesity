@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Введите математическое выражение:");
+        string expression = Console.ReadLine();
+
+        if (CheckBrackets(expression))
+        {
+            Console.WriteLine("Все хорошо");
+        }
+        else
+        {
+            Console.WriteLine("Ошибка в расстановке скобок");
+        }
+    }
+
+    static bool CheckBrackets(string expression)
+    {
+        Dictionary<char, char> bracketPairs = new Dictionary<char, char>
+        {
+            { '(', ')' },
+            { '[', ']' },
+            { '{', '}' }
+        };
+
+        Stack<char> stack = new Stack<char>();
+
+        foreach (char ch in expression)
+        {
+            if (bracketPairs.ContainsKey(ch))
+            {
+                stack.Push(ch);
+            }
+        
+            else if (bracketPairs.ContainsValue(ch))
+            {
+                if (stack.Count == 0 || bracketPairs[stack.Peek()] != ch)
+                {
+                    return false;
+                }
+                stack.Pop();
+            }
+        }
+        return stack.Count == 0;
+    }
+}
