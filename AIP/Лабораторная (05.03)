@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+class Program1
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите выражение в постфиксной записи (каждый элемент на новой строке, завершите ввод пустой строкой):");
+
+        List<string> expression = new List<string>();
+        while (true)
+        {
+            string input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input)) 
+                break;
+            expression.Add(input);
+        }
+
+        try
+        {
+            double result = EvaluatePostfix(expression.ToArray());
+            Console.WriteLine("Результат: " + result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка: " + ex.Message);
+        }
+    }
+
+    static double EvaluatePostfix(string[] expression)
+    {
+        Stack<double> stack = new Stack<double>();
+
+        foreach (string token in expression)
+        {
+            if (double.TryParse(token, out double number))
+            {
+                stack.Push(number);
+            }
+            else
+            {
+                if (stack.Count < 2)
+                {
+                    throw new InvalidOperationException("Недостаточно операндов для операции.");
+                }
+
+                double b = stack.Pop();
+                double a = stack.Pop();
+                switch (token)
+                {
+                    case "+":
+                        stack.Push(a + b);
+                        break;
+                    case "-":
+                        stack.Push(a - b);
+                        break;
+                    case "*":
+                        stack.Push(a * b);
+                        break;
+                    case "/":
+                        if (b == 0)
+                        {
+                            throw new DivideByZeroException("Деление на ноль.");
+                        }
+                        stack.Push(a / b);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Неизвестный оператор: " + token);
+                }
+            }
+        }
+        if (stack.Count != 1)
+        {
+            throw new InvalidOperationException("Некорректное выражение.");
+        }
+
+        return stack.Pop();
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+class Program2
+{
+    static void Main()
+    {
+        
+        List<int> list = new List<int> { 1, 2, 2, 3, 4, 4, 4, 5, 1 };
+
+        HashSet<int> uniqueElements = new HashSet<int>(list);
+
+        Console.WriteLine("Уникальные элементы списка:");
+        foreach (var element in uniqueElements)
+        {
+            Console.WriteLine(element);
+        }
+
+        Dictionary<int, int> chastota = new Dictionary<int, int>();
+
+        foreach (var element in list)
+        {
+            if (chastota.ContainsKey(element))
+            {
+                chastota[element]++;
+            }
+            else
+            {
+                chastota[element] = 1;
+            }
+        }
+
+        Console.WriteLine("\nЧастота появления элементов:");
+        foreach (var pair in chastota)
+        {
+            Console.WriteLine($"{pair.Key} : {pair.Value} раз(а)");
+        }
+    }
+}
