@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+class DijkstraAlgorithm
+{
+    public static int[] Dijkstra(int[,] graph, int start, int end)
+    {
+        int n = graph.GetLength(0); 
+        int[] distances = new int[n]; 
+        bool[] visited = new bool[n]; 
+        int[] previous = new int[n];  
+
+        for (int i = 0; i < n; i++)
+        {
+            distances[i] = int.MaxValue; 
+            previous[i] = -1;           
+        }
+        distances[start] = 0; 
+
+        for (int count = 0; count < n - 1; count++)
+        {
+            int u = MinDistance(distances, visited);
+            visited[u] = true; 
+            for (int v = 0; v < n; v++)
+            {
+                if (!visited[v] && graph[u, v] != 0 && distances[u] != int.MaxValue &&
+                    distances[u] + graph[u, v] < distances[v])
+                {
+                    distances[v] = distances[u] + graph[u, v];
+                    previous[v] = u; 
+                }
+            }
+        }
+        
+        List<int> path = new List<int>();
+        for (int at = end; at != -1; at = previous[at])
+        {
+            path.Add(at);
+        }
+        path.Reverse();
+
+        Console.WriteLine("Минимальный путь:");
+        foreach (int vertex in path)
+        {
+            Console.Write(vertex + " ");
+        }
+        Console.WriteLine();
+
+        return distances; 
+    }
+
+    private static int MinDistance(int[] distances, bool[] visited)
+    {
+        int min = int.MaxValue;
+        int minIndex = -1;
+
+        for (int v = 0; v < distances.Length; v++)
+        {
+            if (!visited[v] && distances[v] <= min)
+            {
+                min = distances[v];
+                minIndex = v;
+            }
+        }
+        return minIndex;
+    }
+
+    static void Main()
+    {
+        int[,] graph = {
+            { 0, 4, 0, 0,},
+            { 4, 0, 8, 0,},
+            { 0, 8, 0, 7,},
+            { 0, 0, 7, 0,},
+        };
+
+        int start = 0; 
+        int end = 3;  
+
+        int[] distances = Dijkstra(graph, start, end);
+
+        Console.WriteLine("Минимальное расстояние от вершины " + start + " до вершины " + end + ": " + distances[end]);
+    }
+}
