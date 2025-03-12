@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+class Graph
+{
+    private int V; 
+    private List<int>[] adj; 
+
+    public Graph(int v)
+    {
+        V = v;
+        adj = new List<int>[V];
+        for (int i = 0; i < V; i++)
+        {
+            adj[i] = new List<int>();
+        }
+    }
+
+    public void AddEdge(int u, int v)
+    {
+        adj[u].Add(v);
+        adj[v].Add(u);
+    }
+
+    private void BridgeUtil(int u, bool[] visited, int[] disc, int[] low, int[] parent, List<Tuple<int, int>> bridges)
+    {
+         int time = 0; 
+        visited[u] = true;
+        disc[u] = low[u] = ++time;
+
+        foreach (int v in adj[u])
+        {
+            if (!visited[v])
+            {
+                parent[v] = u;
+                BridgeUtil(v, visited, disc, low, parent, bridges);
+
+                low[u] = Math.Min(low[u], low[v]);
+                if (low[v] > disc[u])
+                {
+                    bridges.Add(Tuple.Create(u, v));
+                }
+            }
+            else if (v != parent[u])
+            {
+                low[u] = Math.Min(low[u], disc[v]);
+            }
+        }
+    }
+
+    public List<Tuple<int, int>> FindBridges()
+    {
+        bool[] visited = new bool[V];
+        int[] disc = new int[V];
+        int[] low = new int[V];
+        int[] parent = new int[V];
+        List<Tuple<int, int>> bridges = new List<Tuple<int, int>>();
+
+        for (int i = 0; i < V; i++)
+        {
+            parent[i] = -1;
+            visited[i] = false;
+        }
+
+        for (int i = 0; i < V; i++)
+        {
+            if (!visited[i])
+            {
+                BridgeUtil(i, visited, disc, low, parent, bridges);
+            }
+        }
+
+        return bridges;
+    }
+
+    public Tuple<int, int> FindCriticalEdge()
+    {
+        List<Tuple<int, int>> bridges = FindBridges();
+        if (bridges.Count > 0)
+        {
+            return bridges[0];
+        }
+        else
+        {
+            for (int u = 0; u < V; u++)
+            {
+                foreach (int v in adj[u])
+                {
+                    if (u < v) 
+                    {
+                        return Tuple.Create(u, v);
+                    }
+                }
+            }
+            return null;
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Graph g = new Graph(5);
+        g.AddEdge(0, 1);
+        g.AddEdge(0, 2);
+        g.AddEdge(1, 2);
+        g.AddEdge(1, 3);
+        g.AddEdge(3, 4);
+
+        List<Tuple<int, int>> bridges = g.FindBridges();
+        Console.WriteLine("Мосты в графе:");
+        foreach (var bridge in bridges)
+        {
+            Console.WriteLine($"{bridge.Item1} -- {bridge.Item2}");
+        }
+
+        Tuple<int, int> criticalEdge = g.FindCriticalEdge();
+        Console.WriteLine($"Ребро, при удалении которого граф имеет меньше компонент связности: {criticalEdge?.Item1} -- {criticalEdge?.Item2}");
+    }
+}
