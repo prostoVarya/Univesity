@@ -1,0 +1,61 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Пример задаем количество вершин и начальную матрицу
+        int n = 4; // Количество вершин
+        int[,] graph = {
+            { 0, 3, int.MaxValue, 7 },
+            { 8, 0, 2, int.MaxValue },
+            { 5, int.MaxValue, 0, 1 },
+            { 2, int.MaxValue, int.MaxValue, 0 }
+        };
+
+        Console.WriteLine("Исходная матрица:");
+        PrintMatrix(graph, n);
+
+        int[,] distance = Floyd(graph, n);
+
+        Console.WriteLine("Матрица кратчайших расстояний:");
+        PrintMatrix(distance, n);
+    }
+
+    static int[,] Floyd(int[,] graph, int n)
+    {
+        int[,] distance = new int[n, n];
+        Array.Copy(graph, distance, graph.Length); // Копируем исходную матрицу в distance
+
+        for (int k = 0; k < n; k++)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (distance[i, k] != int.MaxValue && distance[k, j] != int.MaxValue)
+                    {
+                        distance[i, j] = Math.Min(distance[i, j], distance[i, k] + distance[k, j]);
+                    }
+                }
+            }
+        }
+
+        return distance;
+    }
+
+    static void PrintMatrix(int[,] matrix, int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (matrix[i, j] == int.MaxValue)
+                    Console.Write("Inf ");
+                else
+                    Console.Write(matrix[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
