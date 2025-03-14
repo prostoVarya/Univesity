@@ -1,0 +1,131 @@
+using System;
+using System.Collections.Generic;
+public class Phone
+{
+    public string Number { get; set; }
+    public string Operator { get; set; }
+
+    public Phone(string number, string operatorName)
+    {
+        Number = number;
+        Operator = operatorName;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        List<Phone> phones = new List<Phone>
+        {
+            new Phone("79991234567", "МТС"),
+            new Phone("79159876543", "Билайн"),
+            new Phone("79031112233", "Теле2"),
+            new Phone("79987654321", "МТС"),
+            new Phone("79101234567", "Билайн")
+        };
+        Dictionary<string, int> operatorChastota = new Dictionary<string, int>();
+
+        foreach (Phone phone in phones)
+        {
+            string operatorName = phone.Operator;
+            
+            if (operatorChastota.ContainsKey(operatorName))
+            {
+                operatorChastota[operatorName]++;
+            }
+            else
+            {
+                operatorChastota[operatorName] = 1;
+            }
+        }
+
+        Console.WriteLine("Частота операторов:");
+        foreach (var pair in operatorChastota)
+        {
+            Console.WriteLine($"{pair.Key}: {pair.Value} раз(а)");
+        }
+    }
+}
+//Задание 2
+using System;
+public class Calculator
+{
+    public int A { get; set; }
+    public int B { get; set; }
+
+    public Calculator(int a, int b)
+    {
+        A = a;
+        B = b;
+    }
+    public int Add() => A + B;
+
+    public int Subtract() => A - B;
+
+    public int Multiply() => A * B;
+    
+    public int Divide()
+    {
+        if (B == 0)
+            throw new DivideByZeroException("Делить на ноль нельзя.");
+        return A / B;
+    }
+}
+
+class Program
+{
+    delegate int OperationDelegate();
+
+    static void Main()
+    {
+        Calculator calc = new Calculator(10, 5);
+
+        // Делегат 1: Сложение, умножение суммы на B, вычитание значения из A
+        OperationDelegate delegate1 = () =>
+        {
+            int sum = calc.Add();
+            Console.WriteLine($"Сложение: {sum}");
+            
+            int product = sum * calc.B;
+            Console.WriteLine($"Умножение суммы на B: {product}");
+            
+            int subtraction = calc.A - product; 
+            Console.WriteLine($"Вычитание значения из A: {subtraction}");
+            
+            return subtraction; // Возврат последнего результата
+        };
+
+        // Делегат 2: Разность, деление разности на B, умножение результата на B
+        OperationDelegate delegate2 = () =>
+        {
+            int difference = calc.Subtract();
+            Console.WriteLine($"Разность: {difference}");
+
+            try
+            {
+                int divisionResult = difference / calc.B; 
+                Console.WriteLine($"Деление разности на B: {divisionResult}");
+
+                int Result = divisionResult * calc.B;
+                Console.WriteLine($"Умножение на B: {Result}");
+                
+                return Result;
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Ошибка: Деление на ноль.");
+                return 0;
+            }
+        };
+
+        // Вызов делегатов
+        Console.WriteLine("Делегат 1:");
+        int res1 = delegate1();
+        Console.WriteLine($"Результат делегата 1: {res1}\n");
+
+        Console.WriteLine("Делегат 2:");
+        int res2 = delegate2();
+        Console.WriteLine($"Результат делегата 2: {res2}");
+    }
+}
