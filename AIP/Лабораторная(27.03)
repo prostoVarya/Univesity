@@ -1,0 +1,108 @@
+using System;
+using System.Threading;
+
+public class Race
+{
+    private const int Finish = 100; 
+    private const int SpeedInterval = 2000; 
+    
+    private readonly Racer[] racers;
+    private bool raceFinished;
+    
+    public Race()
+    {
+        racers = new Racer[3]
+        {
+            new Racer("Гонщик 1", GetRandomSpeed(30, 60)),
+            new Racer("Гонщик 2", GetRandomSpeed(30, 60)),
+            new Racer("Гонщик 3", GetRandomSpeed(30, 60))
+        };
+    }
+    
+    public void Start()
+    {
+        Console.WriteLine("Гонка началась!");
+        var speedChangeThread = new Thread(ChangeSpeeds);
+        speedChangeThread.Start();
+        while (!raceFinished)
+        {
+            UpdateRace();
+            Thread.Sleep(100); 
+        }
+        
+        speedChangeThread.Join();
+    }
+    
+    private void UpdateRace()
+    {
+        Console.Clear();
+        foreach (var racer in racers)
+        {
+            racer.Move();
+            Console.WriteLine($"{racer.Name}: {racer.Distance} м (скорость: {racer.Speed} м/с)");
+            
+            if (racer.Distance >= Finish && !raceFinished)
+            {
+                raceFinished = true;
+                OnRaceFinished(racer);
+            }
+        }
+    }
+    
+    private void ChangeSpeeds()
+    {
+        while (!raceFinished)
+        {
+            Thread.Sleep(SpeedInterval);
+            
+            if (raceFinished) break;
+            
+            foreach (var racer in racers)
+            {
+                racer.Speed = GetRandomSpeed(30, 150);
+            }
+            
+            Console.WriteLine("\nСкорости изменены!\n");
+        }
+    }
+    
+    private void OnRaceFinished(Racer winner)
+    {
+        Console.WriteLine($"\nПобедитель: {winner.Name}!");
+        Console.WriteLine("Гонка завершена!");
+    }
+    
+    private static int GetRandomSpeed(int min, int max)
+    {
+        Random rnd = new Random();
+        return rnd.Next(min, max + 1);
+    }
+}
+
+public class Racer
+{
+    public string Name { get; }
+    public int Speed { get; set; }
+    public double Distance { get; private set; }
+    
+    public Racer(string name, int Speeed)
+    {
+        Name = name;
+        Speed = Speeed;
+        Distance = 0;
+    }
+    
+    public void Move()
+    {
+        Distance += Speed;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Race race = new Race();
+        race.Start();
+    }
+}
