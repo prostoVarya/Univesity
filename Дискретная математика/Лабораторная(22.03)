@@ -1,0 +1,76 @@
+using System;
+ 
+class BellmanFord
+{
+    const int INF = int.MaxValue;
+ 
+    public static void FordBellman(int[,] graph, int V, int source)
+    {
+        int[] distance = new int[V];
+        for (int i = 0; i < V; i++)
+            distance[i] = INF;
+        distance[source] = 0;
+ 
+        // Основной цикл алгоритма
+        for (int i = 1; i < V - 1; i++)
+        {
+            for (int u = 0; u < V; u++)
+            {
+                for (int v = 0; v < V; v++)
+                {
+                    if (graph[u, v] != 0 && distance[u] != INF && distance[u] + graph[u, v] < distance[v])
+                    {
+                        distance[v] = distance[u] + graph[u, v];
+                    }
+                }
+            }
+        }
+ 
+        // Проверка на наличие отрицательных циклов
+        for (int u = 0; u < V; u++)
+        {
+            for (int v = 0; v < V; v++)
+            {
+                if (graph[u, v] != 0 && distance[u] != INF && distance[u] + graph[u, v] < distance[v])
+                {
+                    Console.WriteLine("Граф содержит отрицательный цикл.");
+                    return;
+                }
+            }
+        }
+ 
+        // Вывод результатов
+        Print(distance);
+    }
+ 
+    private static void Print(int[] distance)
+    {
+        Console.WriteLine("Вертикали расстояний от нач. вершины:");
+        for (int i = 0; i < distance.Length; i++)
+        {
+            if (distance[i] == INF)
+                Console.WriteLine($"Вершина {i}: недоступна");
+            else
+                Console.WriteLine($"Вершина {i}: {distance[i]}");
+        }
+    }
+ 
+    public static void Main()
+    {
+        // Пример графа 
+        int[,] graph = {
+            { 0, 4, 4, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 4, -2, 0, 0 },
+            { 3, 0, 2, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 1, 0, 0, -2, 0 },
+            { 0, 3, 0, 0, -3, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 2, 0, 2 },
+            { 0, 0, 0, 0, -2, 0, 0, 0 }
+        };
+        int V = 8; // Количество вершин
+        int source = 0; // Исходная вершина
+ 
+        FordBellman(graph, V, source);
+    }
+}
