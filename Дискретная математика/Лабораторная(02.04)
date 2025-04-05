@@ -1,0 +1,163 @@
+using System;
+using System.Collections.Generic;
+ 
+public class WaveAlgorithm
+{
+    private readonly int[,] _grid;
+    private readonly int _width;
+    private readonly int _height;
+    private readonly Point _start;
+    private readonly Point _end;
+    
+    private const int EMPTY = 0;
+    private const int WALL = 1;
+ 
+    public WaveAlgorithm(int[,] grid, Point start, Point end)
+    {
+        _grid = grid;
+        _width = grid.GetLength(0);
+        _height = grid.GetLength(1);
+        _start = start;
+        _end = end;
+    }
+ 
+    public List<Point> FindPath()
+    {
+        // Проверка начальных и конечных точек
+        if (!IsValid(_start) || !IsValid(_end) || _grid[_start.X, _start.Y] == WALL || _grid[_end.X, _end.Y] == WALL)
+        {
+            Console.WriteLine("Стартовая или конечная точка неправильные");
+            return null;
+        }
+ 
+        // Создаем копию сетки для волнового распространения
+        int[,] waveGrid = new int[_width, _height];
+        for (int x = 0; x < _width; x++)
+            for (int y = 0; y < _height; y++)
+                waveGrid[x, y] = _grid[x, y] == WALL ? -1 : 0;
+ 
+        // Очередь для обработки клеток
+        Queue<Point> queue = new Queue<Point>();
+        queue.Enqueue(_start);
+        waveGrid[_start.X, _start.Y] = 1;
+ 
+        // Направления движения
+        Point[] directions = new Point[]
+        {
+            new Point(0, 1), new Point(1, 0),
+            new Point(0, -1), new Point(-1, 0)
+        };
+ 
+        bool pathFound = false;
+ 
+        // Волновое распространение
+        while (queue.Count > 0 && !pathFound)
+        {
+            Point current = queue.Dequeue();
+            int currentValue = waveGrid[current.X, current.Y];
+ 
+            foreach (var dir in directions)
+            {
+                Point neighbor = new Point(current.X + dir.X, current.Y + dir.Y);
+ 
+                if (IsInGrid(neighbor) && waveGrid[neighbor.X, neighbor.Y] == 0)
+                {
+                    waveGrid[neighbor.X, neighbor.Y] = currentValue + 1;
+                    queue.Enqueue(neighbor);
+ 
+                    if (neighbor.X == _end.X && neighbor.Y == _end.Y)
+                    {
+                        pathFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+ 
+        if (!pathFound)
+        {
+            Console.WriteLine("Путь не найден");
+            return null;
+        }
+ 
+        // Восстановление пути
+        List<Point> path = new List<Point>();
+        Point step = _end;
+        path.Add(step);
+ 
+        int stepValue = waveGrid[step.X, step.Y];
+ 
+        while (stepValue > 1)
+        {
+            foreach (var dir in directions)
+            {
+                Point neighbor = new Point(step.X + dir.X, step.Y + dir.Y);
+ 
+                if (IsInGrid(neighbor) && waveGrid[neighbor.X, neighbor.Y] == stepValue - 1)
+                {
+                    step = neighbor;
+                    stepValue--;
+                    path.Add(step);
+                    break;
+                }
+            }
+        }
+ 
+        path.Reverse();
+        return path;
+    }
+ 
+    private bool IsValid(Point p)
+    {
+        return p.X >= 0 && p.X < _width && p.Y >= 0 && p.Y < _height;
+    }
+ 
+    private bool IsInGrid(Point p)
+    {
+        return p.X >= 0 && p.X < _width && p.Y >= 0 && p.Y < _height;
+    }
+}
+ 
+public struct Point
+{
+    public int X { get; }
+    public int Y { get; }
+ 
+    public Point(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+ 
+    public override string ToString() => $"({X}, {Y})";
+}
+ 
+class Program
+{
+    static void Main()
+    {
+        // Пример лабиринта (0 - проход, 1 - стена)
+        int[,] grid = {
+            { 0, 0, 0, 0, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 }
+        };
+ 
+        Point start = new Point(0, 0);
+        Point end = new Point(4, 4);
+ 
+        var waveAlg = new WaveAlgorithm(grid, start, end);
+        var path = waveAlg.FindPath();
+ 
+        if (path != null)
+        {
+            Console.WriteLine("Кратчайший путь:");
+            foreach (var point in path)
+            {
+                Console.WriteLine(point);
+            }
+        }
+    }
+}
