@@ -1,0 +1,56 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+ 
+class Program
+{
+    static void Main()
+    {
+        int a = 10;
+        int b = 5;
+        
+        // 1. Лямбда-выражения для арифметических операций
+        Func<int, int, int> sum = (x, y) => x + y;
+        Func<int, int, int> subtract = (x, y) => x - y;
+        Func<int, int, int> multiply = (x, y) => x * y;
+        Func<int, int, double> divide = (x, y) => y != 0 ? (double)x / y : throw new DivideByZeroException("Деление на ноль невозможно");
+        
+        Console.WriteLine($"Сумма: {sum(a, b)}");
+        Console.WriteLine($"Разность: {subtract(a, b)}");
+        Console.WriteLine($"Произведение: {multiply(a, b)}");
+        
+        try
+        {
+            Console.WriteLine($"Деление: {divide(a, b)}");
+        }
+        catch (DivideByZeroException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+ 
+        // 2. Список строк и фильтрация с лямбда-выражением
+        List<string> stringList = new List<string> 
+        { 
+            "apple", "banana", "apricot", "orange", "avocado", "kiwi" 
+        };
+        
+        // Фильтрация строк, начинающихся на 'a' 
+        Func<string, bool> startsWithA = s => s.StartsWith("a", StringComparison.OrdinalIgnoreCase);
+        var filteredList = stringList.Where(startsWithA).ToList();
+        
+        Console.WriteLine("\nСтроки, начинающиеся на 'a':");
+        foreach (var item in filteredList)
+        {
+            Console.WriteLine(item);
+        }
+        
+        // 3. Поэлементная обработка отфильтрованного списка
+        Console.WriteLine("\nПоэлементная обработка:");
+        filteredList.ForEach(item => 
+        {
+            // Пример обработки - преобразование в верхний регистр
+            string processed = item.ToUpper();
+            Console.WriteLine($"Обработано: {processed}");
+        });
+    }
+}
