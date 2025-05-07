@@ -1,0 +1,144 @@
+//Library
+using System;
+using System.Collections.Generic;
+
+// Структура для хранения информации о выдаче книги
+public struct BookIssueRecord
+{
+    public DateTime IssueDate;
+    public DateTime? ReturnDate; // null, если книга еще не возвращена
+}
+
+// Структура для хранения информации о книге
+public struct Book
+{
+    public string Author;
+    public string Title;
+    public int PublicationYear;
+    public string Publisher;
+    public DateTime CreationDate;
+    public List<BookIssueRecord> IssueHistory;
+}
+
+public class LibraryDatabase
+{
+    private List<Book> books;
+
+    public LibraryDatabase()
+    {
+        books = new List<Book>();
+    }
+
+    // Метод для добавления книги в базу
+    public void AddBook(Book book)
+    {
+        books.Add(book);
+    }
+
+    // Метод для получения книг, которые никогда не выдавались
+    public List<Book> GetNeverIssuedBooks()
+    {
+        List<Book> result = new List<Book>();
+       
+        foreach (Book book in books)
+        {
+            if (book.IssueHistory == null || book.IssueHistory.Count == 0)
+            {
+                result.Add(book);
+            }
+        }
+       
+        return result;
+    }
+
+    // Метод для получения книг, которые сейчас на руках (не возвращены)
+    public List<Book> GetCurrentlyIssuedBooks()
+    {
+        List<Book> result = new List<Book>();
+       
+        foreach (Book book in books)
+        {
+            if (book.IssueHistory != null)
+            {
+                foreach (BookIssueRecord record in book.IssueHistory)
+                {
+                    if (record.ReturnDate == null)
+                    {
+                        result.Add(book);
+                        break;
+                    }
+                }
+            }
+        }
+       
+        return result;
+    }
+
+    // Пример
+    public static void Main(string[] args)
+    {
+        LibraryDatabase db = new LibraryDatabase();
+
+        Book book1 = new Book
+        {
+            Author= "Иванов Иван Иванович",
+            Title = "Основы программирования",
+            PublicationYear = 2020,
+            Publisher = "ТехИздат",
+            CreationDate = new DateTime(2020, 1, 15),
+            IssueHistory = new List<BookIssueRecord>()
+        };
+
+        Book book2 = new Book
+        {
+            Author= "Петров Петр Петрович",
+            Title = "C#",
+            PublicationYear = 2021,
+            Publisher = "Пресс",
+            CreationDate = new DateTime(2021, 3, 10),
+            IssueHistory = new List<BookIssueRecord>
+            {
+                new BookIssueRecord
+                {
+                    IssueDate = new DateTime(2022, 5, 1),
+                    ReturnDate = new DateTime(2022, 5, 15)
+                },
+                new BookIssueRecord
+                {
+                    IssueDate = new DateTime(2022, 6, 1),
+                    ReturnDate = null // книга сейчас на руках
+                }
+            }
+        };
+
+        Book book3 = new Book
+        {
+            Author = "Сидорова Анна Михайловна",
+            Title = "Базы данных",
+            PublicationYear = 2019,
+            Publisher = "СпбПресс",
+            CreationDate = new DateTime(2019, 11, 20),
+            IssueHistory = new List<BookIssueRecord>() // никогда не выдавалась
+        };
+
+        db.AddBook(book1);
+        db.AddBook(book2);
+        db.AddBook(book3);
+
+        // Получаем и выводим книги, которые никогда не выдавались
+        List<Book> neverIssued = db.GetNeverIssuedBooks();
+        Console.WriteLine("Книги, которые никогда не выдавались:");
+        foreach (Book book in neverIssued)
+        {
+            Console.WriteLine($"{book.Author} - {book.Title}");
+        }
+
+        // Получаем и выводим книги, которые сейчас на руках
+        List<Book> currentlyIssued = db.GetCurrentlyIssuedBooks();
+        Console.WriteLine("\nКниги, которые сейчас на руках:");
+        foreach (Book book in currentlyIssued)
+        {
+            Console.WriteLine($"{book.Author} - {book.Title}");
+        }
+    }
+}
