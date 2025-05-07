@@ -1,0 +1,222 @@
+using System;
+using System.Collections.Generic;
+ 
+public class Subscriber
+{
+    public string PhoneNumber { get; set; }
+    public int ConnectionYear { get; set; }
+    public string Operator { get; set; }
+    public string FullName { get; set; }
+}
+ 
+public class SubscriberManager
+{
+    private List<Subscriber> subscribers = new List<Subscriber>();
+ 
+    public void AddSubscriber(Subscriber subscriber)
+    {
+        subscribers.Add(subscriber);
+    }
+ 
+    // Группировка по году подключения
+    public Dictionary<int, List<Subscriber>> GroupByConnectionYear()
+    {
+        Dictionary<int, List<Subscriber>> result = new Dictionary<int, List<Subscriber>>();
+        
+        foreach (Subscriber sub in subscribers)
+        {
+            if (!result.ContainsKey(sub.ConnectionYear))
+            {
+                result[sub.ConnectionYear] = new List<Subscriber>();
+            }
+            result[sub.ConnectionYear].Add(sub);
+        }
+        
+        return result;
+    }
+ 
+    // Группировка по оператору связи
+    public Dictionary<string, List<Subscriber>> GroupByOperator()
+    {
+        Dictionary<string, List<Subscriber>> result = new Dictionary<string, List<Subscriber>>();
+        
+        foreach (Subscriber sub in subscribers)
+        {
+            if (!result.ContainsKey(sub.Operator))
+            {
+                result[sub.Operator] = new List<Subscriber>();
+            }
+            result[sub.Operator].Add(sub);
+        }
+        
+        return result;
+    }
+ 
+    // Поиск по номеру телефона
+    public Subscriber FindByPhoneNumber(string phoneNumber)
+    {
+        foreach (Subscriber sub in subscribers)
+        {
+            if (sub.PhoneNumber == phoneNumber)
+            {
+                return sub;
+            }
+        }
+        return null;
+    }
+ 
+    // Поиск по ФИО владельца
+    public List<Subscriber> FindByFullName(string fullName)
+    {
+        List<Subscriber> result = new List<Subscriber>();
+        
+        foreach (Subscriber sub in subscribers)
+        {
+            if (sub.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+            {
+                result.Add(sub);
+            }
+        }
+        
+        return result;
+    }
+}
+ 
+public class Program
+{
+    static void Main()
+    {
+        SubscriberManager manager = new SubscriberManager();
+        
+        // Добавляем тестовые данные
+        manager.AddSubscriber(new Subscriber {
+            PhoneNumber = "79123456789",
+            ConnectionYear = 2020,
+            Operator = "МТС",
+            FullName = "Иванов Иван Иванович"
+        });
+        
+        manager.AddSubscriber(new Subscriber {
+            PhoneNumber = "79234567890",
+            ConnectionYear = 2021,
+            Operator = "Билайн",
+            FullName = "Петров Петр Петрович"
+        });
+        
+        manager.AddSubscriber(new Subscriber {
+            PhoneNumber = "79345678901",
+            ConnectionYear = 2020,
+            Operator = "МТС",
+            FullName = "Сидоров Сидор Сидорович"
+        });
+ 
+        while (true)
+        {
+            Console.WriteLine("\nМеню управления абонентами:");
+            Console.WriteLine("1. Показать группировку по году подключения");
+            Console.WriteLine("2. Показать группировку по оператору связи");
+            Console.WriteLine("3. Найти абонента по номеру телефона");
+            Console.WriteLine("4. Найти абонента по ФИО");
+            Console.WriteLine("5. Выход");
+            Console.Write("Выберите пункт меню: ");
+            
+            string choice = Console.ReadLine();
+            
+            switch (choice)
+            {
+                case "1":
+                    ShowByYear(manager);
+                    break;
+                case "2":
+                    ShowByOperator(manager);
+                    break;
+                case "3":
+                    SearchByPhone(manager);
+                    break;
+                case "4":
+                    SearchByName(manager);
+                    break;
+                case "5":
+                    return;
+                default:
+                    Console.WriteLine("Неверный ввод, попробуйте еще раз.");
+                    break;
+            }
+        }
+    }
+ 
+    static void ShowByYear(SubscriberManager manager)
+    {
+        Dictionary<int, List<Subscriber>> byYear = manager.GroupByConnectionYear();
+        
+        Console.WriteLine("\nГруппировка по году подключения:");
+        foreach (KeyValuePair<int, List<Subscriber>> group in byYear)
+        {
+            Console.WriteLine($"\nГод: {group.Key}");
+            foreach (Subscriber sub in group.Value)
+            {
+                Console.WriteLine($"- {sub.FullName}, тел.: {sub.PhoneNumber}, оператор: {sub.Operator}");
+            }
+        }
+    }
+ 
+    static void ShowByOperator(SubscriberManager manager)
+    {
+        Dictionary<string, List<Subscriber>> byOperator = manager.GroupByOperator();
+        
+        Console.WriteLine("\nГруппировка по оператору связи:");
+        foreach (KeyValuePair<string, List<Subscriber>> group in byOperator)
+        {
+            Console.WriteLine($"\nОператор: {group.Key}");
+            foreach (Subscriber sub in group.Value)
+            {
+                Console.WriteLine($"- {sub.FullName}, тел.: {sub.PhoneNumber}, год: {sub.ConnectionYear}");
+            }
+        }
+    }
+ 
+    static void SearchByPhone(SubscriberManager manager)
+    {
+        Console.Write("\nВведите номер телефона для поиска: ");
+        string phone = Console.ReadLine();
+        
+        Subscriber found = manager.FindByPhoneNumber(phone);
+        
+        if (found != null)
+        {
+            Console.WriteLine($"Найден абонент: {found.FullName}");
+            Console.WriteLine($"Телефон: {found.PhoneNumber}");
+            Console.WriteLine($"Оператор: {found.Operator}");
+            Console.WriteLine($"Год подключения: {found.ConnectionYear}");
+        }
+        else
+        {
+            Console.WriteLine("Абонент с таким номером не найден.");
+        }
+    }
+ 
+    static void SearchByName(SubscriberManager manager)
+    {
+        Console.Write("\nВведите ФИО для поиска: ");
+        string name = Console.ReadLine();
+        
+        List<Subscriber> found = manager.FindByFullName(name);
+        
+        if (found.Count > 0)
+        {
+            Console.WriteLine($"Найдено абонентов: {found.Count}");
+            foreach (Subscriber sub in found)
+            {
+                Console.WriteLine($"\nФИО: {sub.FullName}");
+                Console.WriteLine($"Телефон: {sub.PhoneNumber}");
+                Console.WriteLine($"Оператор: {sub.Operator}");
+                Console.WriteLine($"Год подключения: {sub.ConnectionYear}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Абоненты с таким ФИО не найдены.");
+        }
+    }
+}
+ 
