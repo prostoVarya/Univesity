@@ -1,0 +1,76 @@
+//File
+using System;
+using System.Collections.Generic;
+using System.IO;
+ 
+namespace ConsoleApp1
+{
+    class Files
+    {
+        static bool IsNumber(char s)
+        {
+            return char.IsDigit(s);
+        }
+ 
+        static bool IsGoodString(string s)
+        {
+            string currNumber = string.Empty;
+            bool foundEven = false;
+ 
+            foreach (char c in s)
+            {
+                if (IsNumber(c))
+                {
+                    currNumber += c;
+                }
+                else
+                {
+                    if (currNumber.Length > 0)
+                    {
+                        // Проверяем всё число на чётность
+                        if (int.TryParse(currNumber, out int num) && num % 2 == 0)
+                        {
+                            foundEven = true;
+                        }
+                        currNumber = string.Empty;
+                    }
+                }
+            }
+ 
+            // Проверяем число в конце строки
+            if (currNumber.Length > 0)
+            {
+                if (int.TryParse(currNumber, out int num) && num % 2 == 0)
+                {
+                    foundEven = true;
+                }
+            }
+ 
+            return foundEven;
+        }
+ 
+        static void Main()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader("test.txt"))
+                using (StreamWriter ansFile = new StreamWriter("ans.txt"))
+                {
+                    string currS;
+                    while ((currS = reader.ReadLine()) != null)
+                    {
+                        if (IsGoodString(currS))
+                        {
+                            ansFile.WriteLine(currS);
+                        }
+                    }
+                }
+                Console.WriteLine("Файл успешно обработан");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
+    }
+}
