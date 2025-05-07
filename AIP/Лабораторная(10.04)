@@ -1,0 +1,86 @@
+//Array
+using System;
+
+public class GenericArray<T>
+{
+    private T[] _items;
+    private int _size;
+
+    public int Count => _size;
+
+    public GenericArray()
+    {
+        _items = new T[0];
+        _size = 0;
+    }
+
+    public void Add(T item)
+    {
+        if (_size == _items.Length)
+        {
+            int newEmkost = _size == 0 ? 4 : _size * 2;
+            T[] newArray = new T[newEmkost];
+            Array.Copy(_items, newArray, _size);
+            _items = newArray;
+        }
+
+        _items[_size] = item;
+        _size++;
+    }
+
+    public bool Remove(int index)
+    {
+        if (index < 0 || index >= _size)
+        {
+            Console.WriteLine($"Ошибка: индекс {index} вне диапазона [0, {_size - 1}]");
+            return false;
+        }
+
+        _size--;
+        if (index < _size)
+        {
+            Array.Copy(_items, index + 1, _items, index, _size - index);
+        }
+       
+        _items[_size] = default(T);
+        return true;
+    }
+
+    public T GetAt(int index)
+    {
+        if (index < 0 || index >= _size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Индекс {index} вне диапазона [0, {_size - 1}]");
+        }
+
+        return _items[index];
+    }
+
+    public void Print(int index)
+    {
+        if (index < 0 || index >= _size)
+        {
+            Console.WriteLine($"Ошибка: индекс {index} вне диапазона [0, {_size - 1}]");
+            return;
+        }
+
+        Console.WriteLine($"Элемент [{index}]: {_items[index]}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var arr = new GenericArray<string>();
+        arr.Add("Ананас");
+        arr.Add("Банан");
+        arr.Add("Яблоко");
+
+        arr.Print(1); 
+        arr.Print(5); 
+       
+        arr.Remove(0);
+        arr.Print(0); 
+    }
+}
