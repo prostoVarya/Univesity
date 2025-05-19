@@ -1,0 +1,267 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WarehouseApp
+{
+    // Классы для таблиц базы данных
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class Supplier
+    {
+        public int SupplierId { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+    }
+
+    public class Movement
+    {
+        public int SupplierId { get; set; }
+        public int ProductId { get; set; }
+        public DateTime DeliveryDate { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+    }
+
+    class Program
+    {
+        static List<Product> products = new List<Product>();
+        static List<Supplier> suppliers = new List<Supplier>();
+        static List<Movement> movements = new List<Movement>();
+
+        static void InitializeData()
+        {
+            // Инициализация тестовых данных
+            products.AddRange(new[]
+            {
+                new Product { ProductId = 1, Name = "Ноутбук" },
+                new Product { ProductId = 2, Name = "Монитор" },
+                new Product { ProductId = 3, Name = "Клавиатура" },
+                new Product { ProductId = 4, Name = "Мышь" }
+            });
+
+            suppliers.AddRange(new[]
+            {
+                new Supplier { SupplierId = 1, Name = "ТехноПоставка", Phone = "111-111" },
+                new Supplier { SupplierId = 2, Name = "КомпьютерМир", Phone = "222-222" },
+                new Supplier { SupplierId = 3, Name = "ЭлектроникСервис", Phone = "333-333" }
+            });
+
+            var rnd = new Random();
+            var dates = new[] { new DateTime(2023, 1, 10), new DateTime(2023, 1, 15), new DateTime(2023, 2, 5) };
+
+            for (int i = 0; i < 20; i++)
+            {
+                movements.Add(new Movement
+                {
+                    SupplierId = rnd.Next(1, 4),
+                    ProductId = rnd.Next(1, 5),
+                    DeliveryDate = dates[rnd.Next(0, 3)],
+                    Quantity = rnd.Next(1, 10),
+                    Price = rnd.Next(100, 1000)
+                });
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            InitializeData();
+
+            while (true)
+            {
+                Console.WriteLine("\nМеню:");
+                Console.WriteLine("1. Поставщик(и) с наибольшей суммой поставок");
+                Console.WriteLine("2. Поставки товаров, сгруппированные по датам");
+                Console.WriteLine("3. Товары, сгруппированные по поставщику и отсортированные по количеству");
+                Console.WriteLine("4. Товар, который поставлялся чаще всего");
+                Console.WriteLine("5. Сумма поставок, сгруппированных по поставщику");
+                Console.WriteLine("0. Выход");
+                Console.Write("Выберите пункт меню: ");
+
+                if (!int.TryParse(Console.ReadLine(), out int choice))
+                {
+                    Console.WriteLine("Некорректный ввод!");
+                    continue;
+                }
+
+                switch (choice)
+                {
+                    case 1:
+                        ShowTopSuppliersByTotalAmount();
+                        break;
+                    case 2:
+                        ShowDeliveriesGroupedByDate();
+                        break;
+                    case 3:
+                        ShowProductsGroupedBySupplier();
+                        break;
+                    case 4:
+                        ShowMostFrequentlyDeliveredProduct();
+                        break;
+                    case 5:
+                        ShowTotalAmountBySupplier();
+                        break;
+                    case 0:
+                        return;
+                    default:
+                        Console.WriteLine("Неизвестный пункт меню!");
+                        break;
+                }
+            }
+        }
+
+        static void ShowTopSuppliersByTotalAmount()
+        {
+            Console.WriteLine("\nПоставщик(и) с наибольшей суммой поставок:");
+
+            var supplierTotals = movements
+                .GroupBy(m => m.SupplierId)
+                .Select(g => new
+                {
+                    SupplierId = g.Key,
+                    TotalAmount = g.Sum(x => x.Quantity * x.Price)
+                })
+                .OrderByDescending(x => x.TotalAmount)
+                .ToList();
+
+            if (!supplierTotals.Any())
+            {
+                Console.WriteLine("Нет данных о поставках.");
+                return;
+            }
+
+            decimal maxAmount = supplierTotals.First().TotalAmount;
+
+            var topSuppliers = supplierTotals
+                .Where(x => x.TotalAmount == maxAmount)
+                .Join(suppliers,
+                    st => st.SupplierId,
+                    s => s.SupplierId,
+                    (st, s) => new { s.Name, st.TotalAmount });
+
+            foreach (var supplier in topSuppliers)
+            {
+                Console.WriteLine($"{supplier.Name} - {supplier.TotalAmount:C}");
+            }
+        }
+
+        static void ShowDeliveriesGroupedByDate()
+        {
+            Console.WriteLine("\nПоставки товаров, сгруппированные по датам:");
+
+            var deliveriesByDate = movements
+                .GroupBy(m => m.DeliveryDate)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in deliveriesByDate)
+            {
+                Console.WriteLine($"\nДата: {group.Key:d}");
+                Console.WriteLine("Товары:");
+
+                var productsInGroup = group
+                    .Join(products,
+                        m => m.ProductId,
+                        p => p.ProductId,
+                        (m, p) => p.Name);
+
+                foreach (var product in productsInGroup)
+                {
+                    Console.WriteLine($"- {product}");
+                }
+            }
+        }
+
+        static void ShowProductsGroupedBySupplier()
+        {
+            Console.WriteLine("\nТовары, сгруппированные по поставщику и отсортированные по количеству:");
+
+            var productsBySupplier = movements
+                .GroupBy(m => m.SupplierId)
+                .OrderBy(g => g.Key);
+
+            foreach (var supplierGroup in productsBySupplier)
+            {
+                var supplier = suppliers.First(s => s.SupplierId == supplierGroup.Key);
+                Console.WriteLine($"\nПоставщик: {supplier.Name}");
+
+                var productsInGroup = supplierGroup
+                    .GroupBy(m => m.ProductId)
+                    .Select(g => new
+                    {
+                        ProductId = g.Key,
+                        TotalQuantity = g.Sum(x => x.Quantity)
+                    })
+                    .OrderByDescending(x => x.TotalQuantity)
+                    .Join(products,
+                        pg => pg.ProductId,
+                        p => p.ProductId,
+                        (pg, p) => new { p.Name, pg.TotalQuantity });
+
+                foreach (var product in productsInGroup)
+                {
+                    Console.WriteLine($"- {product.Name}: {product.TotalQuantity} шт.");
+                }
+            }
+        }
+
+        static void ShowMostFrequentlyDeliveredProduct()
+        {
+            Console.WriteLine("\nТовар, который поставлялся чаще всего:");
+
+            var productFrequency = movements
+                .GroupBy(m => m.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Frequency = g.Count()
+                })
+                .OrderByDescending(x => x.Frequency)
+                .ToList();
+
+            if (!productFrequency.Any())
+            {
+                Console.WriteLine("Нет данных о поставках.");
+                return;
+            }
+
+            int maxFrequency = productFrequency.First().Frequency;
+
+            var mostFrequentProducts = productFrequency
+                .Where(x => x.Frequency == maxFrequency)
+                .Join(products,
+                    pf => pf.ProductId,
+                    p => p.ProductId,
+                    (pf, p) => p.Name);
+
+            Console.WriteLine(string.Join(", ", mostFrequentProducts) + 
+                             $" (поставки: {maxFrequency} раз)");
+        }
+
+        static void ShowTotalAmountBySupplier()
+        {
+            Console.WriteLine("\nСумма поставок, сгруппированных по поставщику:");
+
+            var amountsBySupplier = movements
+                .GroupBy(m => m.SupplierId)
+                .Select(g => new
+                {
+                    SupplierId = g.Key,
+                    TotalAmount = g.Sum(x => x.Quantity * x.Price)
+                })
+                .OrderByDescending(x => x.TotalAmount)
+                .Join(suppliers,
+                    a => a.SupplierId,
+                    s => s.SupplierId,
+                    (a, s) => new { s.Name, a.TotalAmount });
+
+            foreach (var item in amountsBySupplier)
+            {
+                Console.WriteLine($"{item.Name}: {item.TotalAmount:C}");
+            }
+        }
+    }
+}
