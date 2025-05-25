@@ -1,0 +1,91 @@
+﻿int Rectangle(string line1, string line2, List<string> linesK)
+{
+  string[] N_string = line1.Split(' ');
+  int N = int.Parse(N_string[0]);
+  int M = int.Parse(N_string[1]);
+  int K = int.Parse(line2);
+
+  bool[,] grid = new bool[M, N];
+
+  for (int i = 0; i < K && i < linesK.Count; i++)
+  {
+    string[] coords = linesK[i].Split(' ');
+    int x = int.Parse(coords[0]) - 1;
+    int y = int.Parse(coords[1]) - 1;
+
+    if (x >= 0 && x < N && y >= 0 && y < M)
+    {
+      grid[y, x] = true;
+    }
+  }
+
+  int maxArea = 0;
+
+  for (int x_1 = 0; x_1 < N; x_1++)
+  {
+    for (int y_1 = 0; y_1 < M; y_1++)
+    {
+      for (int x_2 = x_1 + 1; x_2 <= N; x_2++)
+      {
+        for (int y_2 = y_1 + 1; y_2 <= M; y_2++)
+        {
+          bool isRed = false;
+
+          for (int i = y_1; i < y_2; i++)
+          {
+            for (int j = x_1; j < x_2; j++)
+            {
+              Console.WriteLine(grid[i, j]);
+              if (grid[i, j])
+              {
+                isRed = true;
+                break;
+              }
+            }
+            if (isRed) break;
+          }
+
+          if (!isRed)
+          {
+            int area = (x_2 - x_1) * (y_2 - y_1);
+            if (area > maxArea)
+              maxArea = area;
+          }
+        }
+      }
+    }
+  }
+
+  return maxArea;
+}
+
+
+// Тесты
+List<int> results = new List<int>();
+for (int i = 1; i <= 16; i++)
+{
+  string inputFilePath = Path.Combine("tests", $"input_s1_{i}.txt");
+  string outputFilePath = Path.Combine("tests", $"output_s1_{i}.txt");
+  int result = 0;
+
+  if (File.Exists(inputFilePath))
+  {
+    List<string> inputLines = new List<string>(File.ReadAllLines(inputFilePath));
+    result = Rectangle(inputLines[0], inputLines[1], inputLines.GetRange(2, inputLines.Count - 2).ToList());
+    results.Add(result);
+  }
+
+  if (File.Exists(outputFilePath))
+  {
+    var expectedResult = int.Parse(File.ReadAllText(outputFilePath));
+
+    if (expectedResult != result)
+    {
+      Console.WriteLine($"Тест {i} не пройден: {expectedResult}, {result}");
+    }
+    else
+    {
+      Console.WriteLine($"Тест {i} пройден");
+    }
+  }
+}
