@@ -1,0 +1,98 @@
+﻿using System.IO;
+
+int Balls(string[] inputLines)
+{
+  // шар в формате [x, y, z, r]
+  var initialParts = inputLines[0].Split(' ');
+  double[] initialBall = new double[4];
+  initialBall[0] = double.Parse(initialParts[0]);
+  initialBall[1] = double.Parse(initialParts[1]);
+  initialBall[2] = double.Parse(initialParts[2]);
+  initialBall[3] = double.Parse(initialParts[3]);
+  int M = int.Parse(inputLines[1]);
+
+  List<double[]> ballsToAdd = new List<double[]>();
+  for (int i = 2; i < 2 + M; i++)
+  {
+    var parts = inputLines[i].Split(' ');
+    double[] ball = new double[4];
+    ball[0] = double.Parse(parts[0]);
+    ball[1] = double.Parse(parts[1]);
+    ball[2] = double.Parse(parts[2]);
+    ball[3] = double.Parse(parts[3]);
+    ballsToAdd.Add(ball);
+  }
+
+  List<double[]> existingBalls = new List<double[]>();
+  existingBalls.Add(new double[5] { initialBall[0], initialBall[1], initialBall[2], initialBall[3], 0 });
+  int isolatedBallsCount = 1; // Начальный шар является изолированным
+
+  for (int i = 0; i < M; i++)
+  {
+    double[] newBall = ballsToAdd[i];
+    int newBallCount = 0;
+    int diff = 0;
+
+    for (int j = 0; j < existingBalls.Count; j++)
+    {
+      double[] existing = existingBalls[j];
+      double dx = newBall[0] - existing[0];
+      double dy = newBall[1] - existing[1];
+      double dz = newBall[2] - existing[2];
+      
+      double distanceSquared = dx * dx + dy * dy + dz * dz;
+      double sumRad = newBall[3] + existing[3];
+      double sumRadSquared = sumRad * sumRad;
+
+      if (distanceSquared < sumRadSquared)
+      {
+        if (existing[4] == 0)
+          diff--;
+
+        existing[4]++;
+        newBallCount++;
+      }
+    }
+
+    if (newBallCount == 0)
+      diff++;
+
+    isolatedBallsCount += diff;
+    existingBalls.Add(new double[5] { newBall[0], newBall[1], newBall[2], newBall[3], newBallCount });
+
+    if (isolatedBallsCount == 0)
+      return i + 1;
+  }
+
+  return 0;
+}
+
+// Тесты
+List<int> results = new List<int>();
+for (int i = 1; i <= 19; i++)
+{
+  string inputFilePath = Path.Combine("tests", $"input{i}.txt");
+  string outputFilePath = Path.Combine("tests", $"output{i}.txt");
+  int result = 0;
+
+  if (File.Exists(inputFilePath))
+  {
+    var inputLines = File.ReadAllLines(inputFilePath);
+    result = Balls(inputLines);
+    results.Add(result);
+  }
+
+  if (File.Exists(outputFilePath))
+  {
+    var expectedResult = int.Parse(File.ReadAllText(outputFilePath));
+
+    if (expectedResult != result)
+    {
+      Console.WriteLine($"Тест {i} не пройден: {expectedResult}, {result}");
+    }
+    else
+    {
+      Console.WriteLine($"Тест {i} пройден");
+    }
+  }
+}
